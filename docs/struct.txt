@@ -1,0 +1,40 @@
+forgeflow/
+├── lib/
+│   ├── core/                  # Core utilities and configurations
+│   │   ├── config/            # App configs (e.g., themes, constants)
+│   │   │   └── app_theme.dart # Dark theme definitions, Liquid Glass styles
+│   │   ├── di/                # Dependency Injection (e.g., using get_it)
+│   │   │   └── injector.dart
+│   │   ├── utils/             # Helpers (e.g., date utils, animation controllers)
+│   │   └── widgets/           # Reusable widgets (e.g., liquid_glass_card.dart)
+│   ├── data/                  # Data layer
+│   │   ├── datasources/       # Local and remote data sources
+│   │   │   ├── local/         # Hive adapters, boxes (e.g., routine_box.dart)
+│   │   │   └── remote/        # Firebase services (e.g., firestore_routine.dart)
+│   │   ├── models/            # Data models (e.g., routine_model.dart, block_model.dart)
+│   │   └── repositories/      # Repository implementations (e.g., routine_repo_impl.dart)
+│   ├── domain/                # Domain layer (business logic)
+│   │   ├── entities/          # Pure entities (e.g., routine_entity.dart)
+│   │   ├── repositories/      # Abstract repositories (e.g., routine_repo.dart)
+│   │   └── usecases/          # Use cases (e.g., build_routine_usecase.dart, track_block_usecase.dart)
+│   ├── presentation/          # Presentation layer
+│   │   ├── blocs/             # State management (e.g., routine_bloc.dart using Riverpod or Bloc)
+│   │   ├── screens/           # Main screens by feature
+│   │   │   ├── dashboard/     # DashboardScreen, widgets
+│   │   │   ├── build/         # BuildScreen, routine_builder.dart
+│   │   │   ├── track/         # TrackScreen, checkin_widget.dart
+│   │   │   ├── reports/       # ReportsScreen, charts_widgets.dart
+│   │   │   └── rewards/       # RewardsScreen, vault_grid.dart
+│   │   ├── widgets/           # Feature-specific widgets (e.g., progress_liquid_bar.dart)
+│   │   └── routes/            # App routing (e.g., app_router.dart using GoRouter)
+│   └── main.dart              # Entry point
+├── assets/                    # Images, icons, animations (Rive/Flare files)
+├── test/                      # Unit/integration tests
+├── pubspec.yaml               # Dependencies
+├── analysis_options.yaml      # Linter rules
+└── README.md                  # Project docs
+
+Notes:
+Use flutter pub add for dependencies.
+Assets include custom fonts (e.g., for elegant typography), neon gradients, and Rive animation files for liquid effects.
+Tests: Widget tests in presentation/, unit tests in domain/ and data/.

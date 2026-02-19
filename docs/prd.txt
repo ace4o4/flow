@@ -1,0 +1,198 @@
+App Name: ForgeFlow
+Tagline: Forge your flow – Master discipline through gamified precision.
+Overview: ForgeFlow is a premium cross-platform mobile app designed to optimize daily routines with a focus on extreme self-discipline and punctuality. It transforms mundane habits into an engaging, rewarding experience by gamifying tracking and progress. Users create highly customizable routines, track them in real-time, earn rewards, and gain actionable insights. The app emphasizes a luxurious, minimalist UI inspired by advanced "Liquid Glass" aesthetics (e.g., iOS-26 style), featuring frosted translucent panels with real-time blur and refraction, subtle liquid ripples on interactions, vibrant neon/soft gradient accents on a dark base, fluid physics-based animations, and generous white space.
+Target Audience: Ambitious individuals aged 18-45 seeking peak productivity, such as professionals, students, athletes, or self-improvement enthusiasts who value punctuality and discipline.
+Unique Value Proposition (UVP): Unlike generic habit trackers (e.g., Habitica or Todoist), ForgeFlow offers hyper-customizable routines with punctuality-focused gamification, AI-style insights, and a premium, immersive "Liquid Glass" UI that feels like a high-end wellness experience.
+Business Model: Freemium – Core features free; premium unlocks advanced customizations, unlimited templates, ad-free experience, and exclusive rewards (e.g., $4.99/month or $49.99/year).
+Platform: Cross-platform (iOS and Android) for seamless experience.
+Launch Timeline: MVP in 3-6 months; full release Q3 2026.
+Success Metrics: 100K downloads in first year, 4.8+ app store rating, 30% retention rate at 30 days, 15% premium conversion.
+2. Product Vision and Goals
+Vision: Empower users to achieve unbreakable discipline by making routine adherence feel effortless and addictive, like a premium game.
+Goals:
+
+Deliver a clutter-free, visually stunning UI that promotes focus and motivation.
+Ensure high customization without overwhelming users.
+Gamify punctuality to build long-term habits.
+Provide insightful analytics to drive self-improvement.
+Support offline-first usage with optional cloud sync for multi-device access.
+
+Non-Goals:
+
+Social features (e.g., sharing routines or leaderboards) – Focus on personal growth.
+Integration with wearables or calendars in MVP (future expansions).
+Light theme (dark default only; premium users can unlock variations).
+
+3. Technical Requirements
+Tech Stack:
+
+Framework: Flutter – For pixel-perfect cross-platform development, custom animations, and high performance. Ensures identical UI/UX on iOS and Android.
+UI/Animations: Use or custom-build a liquid_glass_renderer or flutter_liquid_glass_plus package for Liquid Glass effects (frosted glassmorphism with blur, refraction, ripples). Integrate flare_flutter or rive for fluid physics-based animations (e.g., liquid pours, ripples on tap).
+Backend/Database: Local-first with SQLite or Hive for offline support. Optional Firebase for cloud sync (user accounts, routine backups), authentication, and analytics.
+Other Libraries:
+drag_and_drop_lists for routine reordering.
+charts_flutter or fl_chart for reports.
+haptic_feedback for subtle vibrations on interactions.
+intl for date/time handling.
+shared_preferences for settings.
+
+Performance: Optimize for 60FPS animations; support devices from iOS 14+ and Android 8+.
+Security: Encrypt local data; use Firebase Auth for secure sync.
+Accessibility: High contrast text, screen reader support, scalable fonts.
+Testing: Unit tests for core logic (e.g., scoring); UI tests with Flutter Driver.
+Deployment: App Store and Google Play; CI/CD with Codemagic or GitHub Actions.
+
+Monetization Integration: In-app purchases via RevenueCat.
+4. Key Features
+All features incorporate Liquid Glass UI: Translucent frosted cards with real-time background blur/refraction, liquid ripple effects on taps/completions, neon/soft gradients for accents, fluid animations (e.g., elements "melt" into place), generous white space, elegant sans-serif typography (e.g., SF Pro or similar), micro-animations (e.g., subtle bounces), and haptics (light tap on check-in). Dark theme default with #121212 base, #FFFFFF text, and accents in #00FFAA (neon teal) or soft purple gradients.
+4.1 Routine Builder
+
+Description: Users create/edit highly customizable daily routines.
+Sub-Features:
+Add unlimited "blocks":
+Timed Activity: e.g., "Gaming" – 2 hours (optional flexible start).
+Scheduled Event: e.g., "Dinner" – fixed at 7:00 PM.
+Duration + Start: e.g., "Sleep" – 8 hours from 9:00 PM.
+
+Drag-and-drop reordering via long-press (with liquid drag animation).
+Assign color/icon categories (e.g., work: blue gear, rest: green leaf).
+Recurring options: Daily, weekdays, custom days.
+Pre-built templates: e.g., "Morning Ritual" (Wake, Meditate, Breakfast), "Evening Wind-Down" (Read, Journal, Sleep Prep).
+
+Data Model: Routine as list of Block objects (id, type, title, duration/start_time, category, recurring).
+
+4.2 Daily Dashboard & Tracking
+
+Description: Visual overview and real-time tracking of today's routine.
+Sub-Features:
+Display as vertical timeline (cards stacked chronologically) or swipeable card list.
+One-tap check-in: Tap card to mark complete with auto-timestamp; triggers liquid ripple + particle/confetti if on-time.
+Punctuality Scoring:
+Early/On-time: Full XP (base = duration in min) + bonus (e.g., +10% for early).
+Late: Reduced XP (e.g., -5% per min late).
+Missed: 0 XP (auto-miss if past end time).
+
+Progress Bars: Liquid-glass bars that "fill" with smooth liquid pour animation; full day perfect = confetti burst.
+
+Notifications: Gentle push reminders (e.g., "Your flow awaits – start 'Workout' now?") 5 min before start.
+
+4.3 Gamification & Reward System
+
+Description: Motivates users through progression and rewards.
+Sub-Features:
+XP: Earned per block completion + punctuality bonus.
+Streaks: Daily perfect days build streaks (e.g., 7-day = badge).
+Levels: 1-100 (XP thresholds, e.g., Level 2 at 500 XP).
+Badges: e.g., "Punctual Pro" for 90% on-time monthly.
+Reward Vault: Spend XP on custom themes (e.g., new gradients), icons, wallpapers, virtual companions (e.g., animated motivator avatar).
+Nudges: Positive, non-shaming (e.g., "You're close to a streak – let's nail this!").
+
+
+4.4 Reports & Analytics
+
+Description: Insights into performance.
+Sub-Features:
+Tabs: Weekly (bar charts), Monthly (line graphs).
+Charts: Completion % pie, Punctuality heat-map (calendar view with color-coded days), Category balance (radar chart).
+AI-Style Insights: Rule-based (e.g., calculate averages): "Evening tasks average 38 min late – suggest shifting dinner 15 min earlier."
+Export: PDF/CSV summaries via share sheet.
+
+
+5. User Flows
+User flows are described as step-by-step sequences. (In a full PRD, these would include wireframes; here, textual descriptions.)
+5.1 Onboarding Flow
+
+Splash Screen: Liquid Glass logo "melts" in with ripple animation.
+Welcome: Translucent card explains core concept; tap "Get Started" (haptic feedback).
+Account Setup: Optional Firebase sign-up (email/Apple/Google) for sync; skip for local-only.
+Quick Setup: Select a template (e.g., Morning Ritual) or build from scratch; auto-generates first routine.
+Tutorial: Swipe through 3-5 Liquid Glass cards explaining tabs and tracking.
+Land on Dashboard.
+
+5.2 Building a Routine Flow
+
+Navigate to "Build" tab (bottom nav icon: hammer).
+View current routine as draggable card list (frosted cards with icons/colors).
+Tap "+" floating button: Modal with block types (Timed, Scheduled, Duration+Start); input title, details.
+Assign category/icon/color via picker (liquid transition).
+Set recurring: Toggle switches.
+Drag to reorder (ripples on drop).
+Save: Auto-syncs to local DB; optional cloud.
+Back to Dashboard.
+
+5.3 Tracking a Routine Flow
+
+"Dashboard" tab: Timeline of today's blocks (e.g., card: "Wake Up" 6:00 AM, progress bar empty).
+As time approaches: Card glows with neon accent; notification nudge.
+Tap card: Check-in button appears; tap to complete (timestamp logged, ripple + confetti if on-time).
+Progress: Overall daily bar fills; XP popup with haptic.
+If late: Card turns subtle red gradient; reduced XP.
+End of Day: Summary card with streak/XP total.
+
+5.4 Viewing Reports Flow
+
+"Reports" tab: Segmented control for Weekly/Monthly.
+Scroll through charts (animated load: lines "draw" in).
+Tap chart for details (e.g., heat-map day expands to blocks).
+Insights Section: List of 3-5 cards with suggestions.
+Export: Tap button; select format; share.
+
+5.5 Rewards Flow
+
+"Rewards" tab: Vault grid of unlockables (themes, icons).
+View XP balance/level in header.
+Tap item: Preview (liquid transition); spend XP if affordable.
+Apply: e.g., New theme updates app-wide with melt animation.
+
+5.6 Settings Flow (Auxiliary)
+From any tab: Profile icon in top-right. Adjust notifications, theme tweaks (premium), data export/delete.
+6. Screen Descriptions
+All screens use bottom tab navigation:
+
+Dashboard (home icon)
+Build (hammer icon)
+Track (checkbox icon) – Note: This might overlap with Dashboard; consider merging if redundant, but per spec: separate for focused tracking view.
+Reports (chart icon)
+Rewards (trophy icon)
+
+Tabs: Liquid Glass bar at bottom, icons with subtle glow on select; swipe gestures for navigation.
+6.1 Dashboard Screen
+
+Layout: Full-screen vertical scroll. Header: Date, overall progress bar (liquid fill). Body: Timeline cards (frosted translucent, stacked with time labels). Each card: Icon, title, time/duration, check-in button (hidden until tap). Footer: XP/streak badges.
+Interactions: Tap card expands details; long-press edits. Swipe left for archive.
+
+6.2 Build Screen
+
+Layout: List view of routine cards (draggable). Header: "My Routine" + template picker. Floating "+" button (ripples on tap).
+Interactions: Drag reorder; tap card to edit modal (fields for type/time/category).
+
+6.3 Track Screen
+
+Layout: Similar to Dashboard but focused on active/in-progress blocks. Carousel of cards for quick swipes; real-time clock integration.
+Interactions: One-tap check-in; manual timestamp override (for corrections).
+
+6.4 Reports Screen
+
+Layout: Tabbed (Weekly/Monthly). Scrollable sections: Charts (interactive, zoomable), Insights list (cards with tips), Export button.
+Interactions: Tap insight to apply suggestion (e.g., auto-shift routine).
+
+6.5 Rewards Screen
+
+Layout: Grid view of locked/unlocked items. Header: XP balance, level progress bar.
+Interactions: Tap to preview/purchase; confirmation modal with liquid confetti on buy.
+
+6.6 Modals/Overlays
+
+All modals: Liquid Glass pop-ups that "rise" from bottom with blur background. Close with swipe down.
+
+7. Edge Cases and Error Handling
+
+Offline: All features work; sync on reconnect.
+Conflicts: e.g., Overlapping blocks – Alert with suggestion to adjust.
+Missed Days: Auto-reset streaks gently.
+Data Loss: Local backups; Firebase recovery.
+
+8. Future Roadmap
+
+V2: Calendar integrations, AI-powered routine suggestions (via ML models).
+V3: Community templates, wearable sync.

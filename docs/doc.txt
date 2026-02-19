@@ -1,0 +1,108 @@
+Project Name: ForgeFlow
+Description: A cross-platform mobile app for gamified routine optimization, built with Flutter for iOS and Android. The architecture emphasizes modularity, scalability, offline-first capabilities, and premium UI performance. It follows a clean architecture pattern to separate concerns: Presentation (UI), Domain (Business Logic), Data (Persistence and External Services).
+Key Principles:
+
+Modular Design: Feature-based modules for easy maintenance and testing.
+Offline-First: Local storage handles core operations; cloud sync is optional.
+Performance: Optimized for fluid animations and low battery usage.
+Security: Encrypted local data; secure auth for cloud features.
+Scalability: Easy to add features like AI enhancements or integrations.
+
+Tech Stack Summary:
+
+Frontend: Flutter (Dart)
+UI/Animations: Custom widgets with packages for Liquid Glass effects.
+State Management: Provider or Riverpod for reactive UI.
+Data Layer: Hive (local NoSQL) + Firebase (cloud sync/auth).
+Other: Firebase Analytics for usage tracking; RevenueCat for in-app purchases.
+
+
+
+
+1. Modules and Components
+1.1 Core Module
+
+Handles app-wide setup: ThemeProvider, Localization, Error Handling.
+Dependency Injection: Use get_it to register singletons (e.g., repositories, use cases).
+
+1.2 Data Layer
+
+Entities vs Models: Entities are platform-agnostic (domain); Models are for serialization (data).
+Local Storage: Hive for fast, encrypted NoSQL. Boxes: routines, tracks, rewards, users. Adapters for custom objects.
+Remote Storage: Firebase Firestore for sync. Collections: users/{uid}/routines, users/{uid}/tracks. Use offline persistence enabled.
+Repositories: Abstract interfaces in domain; impl in data. e.g., RoutineRepository with methods like getRoutines(), saveRoutine(), handling local/remote fallback.
+
+1.3 Domain Layer
+
+Entities: Immutable classes (e.g., BlockEntity with type, duration, startTime).
+Use Cases: Interactors for business logic. e.g.,
+BuildRoutineUseCase: Validates and saves routine.
+TrackBlockUseCase: Calculates punctuality score, updates XP.
+GenerateInsightsUseCase: Analyzes data for reports (rule-based logic).
+
+Gamification Logic: Centralized in GamificationService (singleton): Handles XP calc, levels, streaks, badges.
+
+1.4 Presentation Layer
+
+State Management: Riverpod for providers (e.g., routineProvider watches repo changes).
+UI Components:
+Custom Widgets: LiquidGlassCard (uses BackdropFilter for blur, CustomPainter for refraction/ripples).
+Animations: AnimationController for physics-based (e.g., liquid pour using Curves.easeInOut). Integrate flutter_animate or custom shaders.
+Navigation: BottomNavigationBar with custom Liquid Glass styling; GoRouter for deep links.
+
+Screens: As per PRD (Dashboard, Build, Track, Reports, Rewards). Each screen uses providers for data.
+
+1.5 External Integrations
+
+Firebase:
+Auth: Anonymous or email/Google/Apple.
+Firestore: For sync. Listen to changes with Streams.
+Analytics: Log events like routine_completed.
+
+In-App Purchases: RevenueCat SDK; products for premium subscriptions.
+Notifications:flutter_local_notifications for reminders; Firebase Messaging for cloud pushes (premium).
+Haptics:haptic_feedback package.
+Charts:fl_chart for reports visuals.
+
+2. Data Flow Examples
+2.1 Building a Routine
+
+User interacts with BuildScreen UI.
+On save: Screen calls BuildRoutineUseCase.
+UseCase validates (e.g., no overlaps) and calls RoutineRepository.save().
+Repo saves to local Hive; if online, syncs to Firestore.
+Provider notifies UI to refresh.
+
+2.2 Tracking and Scoring
+
+DashboardScreen loads today's routine via GetRoutineUseCase.
+On check-in: TrackBlockUseCase timestamps, calculates score (e.g., if now - startTime < 0: bonus).
+Updates local track data; gamification service adds XP, checks streaks.
+UI animates progress bar fill with liquid effect.
+
+2.3 Reports Generation
+
+ReportsScreen calls GetAnalyticsUseCase.
+UseCase queries repo for historical data.
+Processes: Calculates averages, generates insights (e.g., late averages via simple stats).
+UI renders charts with animations.
+
+3. Security and Performance Considerations
+
+Security:
+Encrypt Hive boxes with user-generated key.
+Secure Firebase rules: Only authenticated users access their data.
+No sensitive data in logs.
+
+Performance:
+Lazy loading for lists/charts.
+Optimize animations: Use TickerMode to disable off-screen.
+Background sync: Use workmanager for periodic Firebase updates.
+
+Error Handling: Global handler with Sentry integration (optional); user-friendly toasts for failures (e.g., "Offline – Changes will sync later").
+
+4. Deployment and CI/CD
+
+Build: Flutter build for APK/AAB (Android), IPA (iOS).
+CI/CD: GitHub Actions: Lint, test, build on push; deploy to TestFlight/Play Console.
+Monitoring: Firebase Crashlytics for errors; Analytics for usage.

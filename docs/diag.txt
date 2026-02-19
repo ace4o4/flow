@@ -1,0 +1,18 @@
++-------------------+     +-------------------+     +-------------------+
+|   Presentation    |     |      Domain       |     |       Data        |
+|     Layer         |<--->|     Layer         |<--->|      Layer        |
+| (UI/Widgets)      |     |  Use Cases,       |     | (Repositories,    |
+|                   |     |  Entities,        |     |  Local DB,        |
+|                   |     |  Repositories     |     |  Remote API)      |
++-------------------+     +-------------------+     +-------------------+
+          |                           |                           |
+          v                           v                           v
++-------------------+     +-------------------+     +-------------------+
+|   Liquid Glass    |     | Gamification Logic|     | Firebase/Hive     |
+|   Custom Widgets  |     | (Scoring, Rewards)|     | Integration       |
++-------------------+     +-------------------+     +-------------------+
+
+External Services: Firebase (Auth, Firestore, Analytics), RevenueCat (IAP)
+Platform Channels: Notifications, Haptics (Native integrations via Flutter plugins)
+
+Data Flow: User interacts with UI -> Presentation calls Domain use cases -> Domain interacts with Data repositories -> Data handles local/remote persistence -> Results flow back upwards.
