@@ -2,7 +2,6 @@
 
 A new Flutter project.
 
-## Gting 
 
 This project is a starting point for a Flutter application.
 
