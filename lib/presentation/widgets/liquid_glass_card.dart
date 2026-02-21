@@ -1,51 +1,65 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+/// Minimal glass card — frosted surface with subtle border.
+/// Adapts to light/dark via Theme colors.
 class LiquidGlassCard extends StatelessWidget {
   final Widget child;
-  final double? width;
-  final double? height;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsets padding;
   final double borderRadius;
+  final VoidCallback? onTap;
+  final Color? accentColor;
 
   const LiquidGlassCard({
     super.key,
     required this.child,
-    this.width,
-    this.height,
-    this.padding = const EdgeInsets.all(16.0),
-    this.borderRadius = 20.0,
+    this.padding = const EdgeInsets.all(16),
+    this.borderRadius = 16,
+    this.onTap,
+    this.accentColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final fill = isDark
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.white.withValues(alpha: 0.7);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
+
+    Widget card = ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        filter:
+            ImageFilter.blur(sigmaX: isDark ? 16 : 8, sigmaY: isDark ? 16 : 8),
         child: Container(
-          width: width,
-          height: height,
           padding: padding,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(borderRadius),
+            color: fill,
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
-              width: 1.5,
-            ),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withOpacity(0.15),
-                Colors.white.withOpacity(0.05),
-              ],
-            ),
+                color: accentColor?.withValues(alpha: 0.15) ?? border),
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
           ),
           child: child,
         ),
       ),
     );
+
+    if (onTap != null) {
+      card = GestureDetector(onTap: onTap, child: card);
+    }
+    return card;
   }
 }

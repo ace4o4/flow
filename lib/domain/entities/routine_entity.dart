@@ -12,4 +12,18 @@ class RoutineEntity {
     required this.blocks,
     this.isActive = true,
   });
+
+  RoutineEntity copyWith({
+    String? id,
+    String? name,
+    List<BlockEntity>? blocks,
+    bool? isActive,
+  }) {
+    return RoutineEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      blocks: blocks ?? this.blocks,
+      isActive: isActive ?? this.isActive,
+    );
+  }
 }

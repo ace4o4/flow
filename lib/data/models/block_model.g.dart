@@ -25,13 +25,15 @@ class BlockModelAdapter extends TypeAdapter<BlockModel> {
       category: fields[5] as String,
       colorValue: fields[6] as int,
       isCompleted: fields[7] as bool,
+      iconCodePoint: fields[8] as int?,
+      recurringDays: (fields[9] as List).cast<int>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, BlockModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +49,11 @@ class BlockModelAdapter extends TypeAdapter<BlockModel> {
       ..writeByte(6)
       ..write(obj.colorValue)
       ..writeByte(7)
-      ..write(obj.isCompleted);
+      ..write(obj.isCompleted)
+      ..writeByte(8)
+      ..write(obj.iconCodePoint)
+      ..writeByte(9)
+      ..write(obj.recurringDays);
   }
 
   @override

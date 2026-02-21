@@ -6,4 +6,7 @@ linter:
     prefer_final_locals: true
     avoid_print: true
     use_key_in_widget_constructors: true
-    always_use_package_imports: true
+    # Disable this rule since we use relative imports in some places
+    always_use_package_imports: false
+    # Suppress overridden_fields warning for Hive models
+    overridden_fields: false

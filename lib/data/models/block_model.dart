@@ -13,11 +13,11 @@ class BlockModel extends BlockEntity {
   @HiveField(1)
   final String title;
   @HiveField(2)
-  final String typeString; // Store enum as string
+  final String typeString;
   @HiveField(3)
   final int durationInMinutes;
   @HiveField(4)
-  final String? startTimeString; // Store TimeOfDay as "HH:mm"
+  final String? startTimeString;
   @override
   @HiveField(5)
   final String category;
@@ -27,6 +27,12 @@ class BlockModel extends BlockEntity {
   @override
   @HiveField(7)
   final bool isCompleted;
+  @override
+  @HiveField(8)
+  final int? iconCodePoint;
+  @override
+  @HiveField(9)
+  final List<int> recurringDays;
 
   BlockModel({
     required this.id,
@@ -37,10 +43,15 @@ class BlockModel extends BlockEntity {
     required this.category,
     required this.colorValue,
     required this.isCompleted,
+    this.iconCodePoint,
+    this.recurringDays = const [1, 2, 3, 4, 5, 6, 7],
   }) : super(
           id: id,
           title: title,
-          type: BlockType.values.firstWhere((e) => e.toString() == typeString),
+          type: BlockType.values.firstWhere(
+            (e) => e.toString() == typeString,
+            orElse: () => BlockType.timed,
+          ),
           duration: Duration(minutes: durationInMinutes),
           startTime: startTimeString != null
               ? TimeOfDay(
@@ -49,6 +60,8 @@ class BlockModel extends BlockEntity {
               : null,
           category: category,
           colorValue: colorValue,
+          iconCodePoint: iconCodePoint,
+          recurringDays: recurringDays,
           isCompleted: isCompleted,
         );
 
@@ -64,6 +77,8 @@ class BlockModel extends BlockEntity {
       category: entity.category,
       colorValue: entity.colorValue,
       isCompleted: entity.isCompleted,
+      iconCodePoint: entity.iconCodePoint,
+      recurringDays: entity.recurringDays,
     );
   }
 }
