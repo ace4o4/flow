@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -14,64 +13,70 @@ class AppTheme {
   static const Color error = Color(0xFFEF4444);
   static const Color orange = Color(0xFFFF8C42);
 
-  // ── Dark Palette (Neo Tactile) ──
-  static const Color darkBg = Color(0xFF08080F);
-  static const Color darkSurface = Color(0xFF0E0E1A);
-  static const Color darkCard = Color(0xFF141422);
-  static const Color darkCardLight = Color(0xFF1A1A2E);
-  static const Color darkBorder = Color(0xFF252540);
-  static const Color darkText1 = Color(0xFFEAEAF4);
-  static const Color darkText2 = Color(0xFF7878A0);
-  static const Color darkText3 = Color(0xFF45455E);
+  // ── Dark Palette (Neumorphic) ──
+  static const Color darkBg = Color(0xFF1E1E24);
+  static const Color darkSurface = Color(0xFF23232A);
+  static const Color darkCard = Color(0xFF26262E);
+  static const Color darkCardLight = Color(0xFF2A2A32);
+  static const Color darkBorder = Color(0xFF383842);
+  static const Color darkText1 = Color(0xFFFFFFFF);
+  static const Color darkText2 = Color(0xFFA6A6B2);
+  static const Color darkText3 = Color(0xFF727280);
 
-  // ── Light Palette ──
-  static const Color lightBg = Color(0xFFF2F2F7);
-  static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color lightBorder = Color(0xFFE0E0EA);
-  static const Color lightText1 = Color(0xFF1A1A2E);
-  static const Color lightText2 = Color(0xFF6E6E8A);
-  static const Color lightText3 = Color(0xFFA0A0B8);
+  // ── Light Palette (Neumorphic) ──
+  static const Color lightBg = Color(0xFFE0E5EC);
+  static const Color lightSurface = Color(0xFFE6EBF2);
+  static const Color lightCard = Color(0xFFE0E5EC);
+  static const Color lightBorder = Color(0xFFD1D9E6);
+  static const Color lightText1 = Color(0xFF2D3748);
+  static const Color lightText2 = Color(0xFF718096);
+  static const Color lightText3 = Color(0xFFA0AEC0);
 
-  // ── Glass Card Decoration ──
-  static BoxDecoration glassCard(
-      {bool isDark = true, Color? glowColor, double radius = 20}) {
+  // ── Neumorphic Card Decoration ──
+  static BoxDecoration neoCard({
+    bool isDark = true,
+    double radius = 24,
+    bool isInset = false,
+  }) {
+    final bgColor = isDark ? darkCard : lightCard;
+
+    // For Neumorphism, we need a lighter shadow (top-left) and darker shadow (bottom-right)
+    final lightShadow =
+        isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white;
+    final darkShadow = isDark
+        ? Colors.black.withValues(alpha: 0.4)
+        : const Color(0xFFA3B1C6).withValues(alpha: 0.6);
+
+    if (isInset) {
+      // Inset illusion with uniform border to prevent borderRadius crash
+      return BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        color: isDark ? const Color(0xFF1E1E24) : const Color(0xFFDDE3EB),
+        border: Border.all(
+          color: isDark ? const Color(0xFF16161C) : const Color(0xFFC7D0DC),
+          width: 1.5,
+        ),
+      );
+    }
+
+    // Extruded (Pop-out) Neumorphic Effect
     return BoxDecoration(
       borderRadius: BorderRadius.circular(radius),
-      color: isDark
-          ? Colors.white.withValues(alpha: 0.04)
-          : Colors.white.withValues(alpha: 0.85),
-      border: Border.all(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.07)
-            : Colors.black.withValues(alpha: 0.04),
-      ),
-      boxShadow: isDark
-          ? [
-              if (glowColor != null)
-                BoxShadow(
-                    color: glowColor.withValues(alpha: 0.08),
-                    blurRadius: 24,
-                    spreadRadius: -4),
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8)),
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2)),
-            ]
-          : [
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4)),
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1)),
-            ],
+      color: bgColor,
+      boxShadow: [
+        // Bottom-Right Dark Shadow
+        BoxShadow(
+          color: darkShadow,
+          blurRadius: 16,
+          offset: const Offset(8, 8),
+        ),
+        // Top-Left Light Highlight
+        BoxShadow(
+          color: lightShadow,
+          blurRadius: 16,
+          offset: const Offset(-8, -8),
+        ),
+      ],
     );
   }
 
@@ -106,7 +111,7 @@ class AppTheme {
       ),
       cardColor: darkCard,
       dividerColor: darkBorder,
-      textTheme: GoogleFonts.interTextTheme(base.textTheme).apply(
+      textTheme: GoogleFonts.outfitTextTheme(base.textTheme).apply(
         bodyColor: darkText1,
         displayColor: darkText1,
       ),
@@ -114,7 +119,7 @@ class AppTheme {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: GoogleFonts.inter(
+        titleTextStyle: GoogleFonts.outfit(
           fontWeight: FontWeight.w700,
           fontSize: 22,
           color: darkText1,
@@ -141,7 +146,7 @@ class AppTheme {
       ),
       cardColor: lightCard,
       dividerColor: lightBorder,
-      textTheme: GoogleFonts.interTextTheme(base.textTheme).apply(
+      textTheme: GoogleFonts.outfitTextTheme(base.textTheme).apply(
         bodyColor: lightText1,
         displayColor: lightText1,
       ),
@@ -149,7 +154,7 @@ class AppTheme {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: GoogleFonts.inter(
+        titleTextStyle: GoogleFonts.outfit(
           fontWeight: FontWeight.w700,
           fontSize: 22,
           color: lightText1,

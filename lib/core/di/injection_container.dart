@@ -13,6 +13,7 @@ import 'package:forgeflow/domain/repositories/user_repository.dart';
 import 'package:forgeflow/domain/usecases/get_routines_usecase.dart';
 import 'package:forgeflow/domain/usecases/save_routine_usecase.dart';
 import 'package:forgeflow/domain/usecases/track_block_usecase.dart';
+import 'package:forgeflow/domain/usecases/undo_track_block_usecase.dart';
 import 'package:forgeflow/domain/usecases/get_track_records_usecase.dart';
 import 'package:forgeflow/domain/usecases/get_user_profile_usecase.dart';
 
@@ -37,15 +38,17 @@ Future<void> init() async {
   // ── Repositories ──
   sl.registerLazySingleton<RoutineRepository>(
       () => RoutineRepositoryImpl(sl()));
-  sl.registerLazySingleton<TrackRepository>(
-      () => TrackRepositoryImpl(sl()));
-  sl.registerLazySingleton<UserRepository>(
-      () => UserRepositoryImpl(sl()));
+  sl.registerLazySingleton<TrackRepository>(() => TrackRepositoryImpl(sl()));
+  sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(sl()));
 
   // ── Use Cases ──
   sl.registerLazySingleton(() => GetRoutinesUseCase(sl()));
   sl.registerLazySingleton(() => SaveRoutineUseCase(sl()));
   sl.registerLazySingleton(() => TrackBlockUseCase(
+        trackRepository: sl(),
+        userRepository: sl(),
+      ));
+  sl.registerLazySingleton(() => UndoTrackBlockUseCase(
         trackRepository: sl(),
         userRepository: sl(),
       ));

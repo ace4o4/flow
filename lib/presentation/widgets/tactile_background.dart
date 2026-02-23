@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 /// Animated ambient background with floating gradient orbs.
@@ -54,13 +53,14 @@ class _TactileBackgroundState extends State<TactileBackground>
 
       // Animated orbs
       Positioned.fill(
-          child: AnimatedBuilder(
+          child: RepaintBoundary(
+              child: AnimatedBuilder(
         animation: _ctrl,
         builder: (_, __) => CustomPaint(
           painter: _OrbPainter(_ctrl.value),
           size: Size.infinite,
         ),
-      )),
+      ))),
 
       // Subtle grain/noise overlay for texture
       Positioned.fill(
@@ -79,17 +79,6 @@ class _TactileBackgroundState extends State<TactileBackground>
         ),
       ))),
 
-      // Subtle grid dots for depth (3D perspective feel)
-      Positioned.fill(
-          child: IgnorePointer(
-              child: AnimatedBuilder(
-        animation: _ctrl,
-        builder: (_, __) => CustomPaint(
-          painter: _GridPainter(_ctrl.value),
-          size: Size.infinite,
-        ),
-      ))),
-
       // Content
       widget.child,
     ]);
@@ -102,13 +91,11 @@ class _OrbPainter extends CustomPainter {
   _OrbPainter(this.t);
 
   static const _orbs = [
-    _Orb(0.2, 0.3, 120, Color(0xFF00D4FF), 0.08, 0.8), // cyan top-left
-    _Orb(0.8, 0.2, 100, Color(0xFF6C63FF), 0.06, 1.2), // purple top-right
-    _Orb(0.5, 0.6, 160, Color(0xFF00B4D8), 0.05, 0.6), // teal center
-    _Orb(0.3, 0.8, 90, Color(0xFFa855f6), 0.04, 1.0), // violet bottom-left
-    _Orb(0.75, 0.75, 110, Color(0xFF0891b2), 0.05,
-        0.9), // dark cyan bottom-right
-    _Orb(0.15, 0.55, 70, Color(0xFF6366f1), 0.035, 1.4), // indigo mid-left
+    _Orb(0.2, 0.3, 140, Color(0xFF1E1E24), 0.3, 0.6), // subtle top-left
+    _Orb(0.8, 0.2, 120, Color(0xFF16161C), 0.25, 0.8), // subtle top-right
+    _Orb(0.5, 0.6, 200, Color(0xFF1A1A22), 0.2, 0.4), // center glow
+    _Orb(0.3, 0.8, 110, Color(0xFF18181A), 0.3, 0.7), // subtle bottom-left
+    _Orb(0.75, 0.75, 130, Color(0xFF1c1c22), 0.2, 0.5), // subtle bottom-right
   ];
 
   @override
@@ -150,41 +137,4 @@ class _Orb {
   final double opacity, speed;
   const _Orb(this.baseX, this.baseY, this.radius, this.color, this.opacity,
       this.speed);
-}
-
-// ── Subtle perspective grid dots ──
-class _GridPainter extends CustomPainter {
-  final double t;
-  _GridPainter(this.t);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.012)
-      ..style = PaintingStyle.fill;
-
-    const spacing = 48.0;
-    // Slow drift for parallax feel
-    final offsetY = (t * spacing * 0.3) % spacing;
-
-    for (double y = -spacing + offsetY;
-        y < size.height + spacing;
-        y += spacing) {
-      for (double x = 0; x < size.width; x += spacing) {
-        // Fade dots toward edges for vignette
-        final distFromCenter =
-            ((Offset(x, y) - Offset(size.width / 2, size.height / 2)).distance /
-                    (size.width * 0.6))
-                .clamp(0.0, 1.0);
-        final alpha = 0.012 * (1 - distFromCenter * 0.7);
-        if (alpha < 0.002) continue;
-
-        paint.color = Colors.white.withValues(alpha: alpha);
-        canvas.drawCircle(Offset(x, y), 1, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _GridPainter old) => true;
 }

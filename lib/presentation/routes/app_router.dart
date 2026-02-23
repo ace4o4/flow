@@ -7,6 +7,7 @@ import 'package:forgeflow/presentation/screens/track/track_screen.dart';
 import 'package:forgeflow/presentation/screens/reports/reports_screen.dart';
 import 'package:forgeflow/presentation/screens/rewards/rewards_screen.dart';
 import 'package:forgeflow/presentation/widgets/scaffold_with_navbar.dart';
+import 'package:forgeflow/presentation/screens/detox/detox_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorDashboardKey =
@@ -33,7 +34,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/',
-                builder: (context, state) => const DashboardScreen(),
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const DashboardScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
               ),
             ],
           ),
@@ -42,7 +50,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/track',
-                builder: (context, state) => const TrackScreen(),
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const TrackScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
               ),
             ],
           ),
@@ -51,7 +66,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/reports',
-                builder: (context, state) => const ReportsScreen(),
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const ReportsScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
               ),
             ],
           ),
@@ -60,7 +82,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/rewards',
-                builder: (context, state) => const RewardsScreen(),
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const RewardsScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
               ),
             ],
           ),
@@ -69,7 +98,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/build',
         parentNavigatorKey: _rootNavigatorKey, // Full screen
-        builder: (context, state) => const BuildRoutineScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const BuildRoutineScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/detox',
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const DetoxScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
       ),
     ],
   );

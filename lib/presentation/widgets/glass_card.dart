@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:forgeflow/core/config/app_theme.dart';
+import 'package:forgeflow/presentation/widgets/tap_scale.dart';
 
 /// Frosted glass card with subtle glow — Neo Tactile style.
 /// Backdrop blur + translucent fill + glowing shadow.
+/// Automatically wraps in TapScale when [onTap] is provided.
 class GlassCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
@@ -12,6 +14,7 @@ class GlassCard extends StatelessWidget {
   final Color? glowColor;
   final bool compact;
   final double blur;
+  final bool isInset;
 
   const GlassCard({
     super.key,
@@ -22,32 +25,25 @@ class GlassCard extends StatelessWidget {
     this.glowColor,
     this.compact = false,
     this.blur = 16,
+    this.isInset = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    Widget card = ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-            sigmaX: isDark ? blur : blur * 0.5,
-            sigmaY: isDark ? blur : blur * 0.5),
-        child: Container(
-          padding: compact ? const EdgeInsets.all(14) : padding,
-          decoration: AppTheme.glassCard(
-            isDark: isDark,
-            glowColor: glowColor,
-            radius: borderRadius,
-          ),
-          child: child,
-        ),
+    final Widget card = Container(
+      padding: compact ? const EdgeInsets.all(14) : padding,
+      decoration: AppTheme.neoCard(
+        isDark: isDark,
+        radius: borderRadius,
+        isInset: isInset,
       ),
+      child: child,
     );
 
     if (onTap != null) {
-      return GestureDetector(onTap: onTap, child: card);
+      return TapScale(onTap: onTap, child: card);
     }
     return card;
   }

@@ -95,4 +95,22 @@ class RoutineListNotifier
       await saveRoutine(routine);
     }
   }
+
+  /// Remove a block from a routine and save to Hive
+  Future<void> deleteBlock(String routineId, String blockId) async {
+    final currentList = state.value ?? [];
+    final updatedList = currentList.map((routine) {
+      if (routine.id == routineId) {
+        final updatedBlocks =
+            routine.blocks.where((b) => b.id != blockId).toList();
+        return routine.copyWith(blocks: updatedBlocks);
+      }
+      return routine;
+    }).toList();
+
+    state = AsyncValue.data(updatedList);
+
+    final routine = updatedList.firstWhere((r) => r.id == routineId);
+    await saveRoutine(routine);
+  }
 }

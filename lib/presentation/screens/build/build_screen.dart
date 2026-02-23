@@ -11,7 +11,7 @@ import 'package:forgeflow/presentation/widgets/glass_card.dart';
 
 const _uuid = Uuid();
 const _cats = ['Work', 'Health', 'Rest', 'Study', 'Social', 'Other'];
-const _catEmoji = ['💼', '❤️', '😴', '📚', '👥', '📦'];
+
 const _catIcons = [
   Icons.work_outline,
   Icons.favorite_border,
@@ -52,225 +52,246 @@ class _State extends ConsumerState<BuildRoutineScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
-          child: Column(children: [
-            // Header
-            Row(children: [
-              GestureDetector(
-                  onTap: () => context.pop(),
-                  child: Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: AppTheme.accent.withValues(alpha: 0.06),
-                          border: Border.all(
-                              color: AppTheme.accent.withValues(alpha: 0.12)),
-                          boxShadow: [
-                            BoxShadow(
-                                color: AppTheme.accent.withValues(alpha: 0.05),
-                                blurRadius: 8)
-                          ]),
-                      child: Icon(Icons.arrow_back_rounded,
-                          size: 20,
-                          color: AppTheme.accent.withValues(alpha: 0.7)))),
-              const SizedBox(width: 14),
-              Text('New Routine',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: cs.onSurface,
-                      letterSpacing: -0.5)),
-            ]).animate().fadeIn(duration: 250.ms),
-            const SizedBox(height: 22),
-
-            // Name input
-            GlassCard(
-              padding: EdgeInsets.zero,
-              child: TextField(
-                controller: _name,
-                style: TextStyle(
-                    color: cs.onSurface,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500),
-                decoration: InputDecoration(
-                  hintText: 'Routine name',
-                  hintStyle: TextStyle(
-                      color: isDark ? AppTheme.darkText3 : AppTheme.lightText3),
-                  border: InputBorder.none,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                MediaQuery.sizeOf(context).width > 600 ? 32 : 16,
+                MediaQuery.sizeOf(context).width > 600 ? 32 : 20,
+                MediaQuery.sizeOf(context).width > 600 ? 32 : 16,
+                0,
               ),
-            ).animate().fadeIn(delay: 50.ms, duration: 250.ms),
-            const SizedBox(height: 18),
-
-            // Blocks header
-            Row(children: [
-              Text('Blocks',
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: cs.onSurface)),
-              const SizedBox(width: 8),
-              Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppTheme.accent.withValues(alpha: 0.1)),
-                  child: Text('${_blocks.length}',
+              child: Column(children: [
+                // Header
+                Row(children: [
+                  GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: AppTheme.accent.withValues(alpha: 0.06),
+                              border: Border.all(
+                                  color:
+                                      AppTheme.accent.withValues(alpha: 0.12)),
+                              boxShadow: [
+                                BoxShadow(
+                                    color:
+                                        AppTheme.accent.withValues(alpha: 0.05),
+                                    blurRadius: 8)
+                              ]),
+                          child: Icon(Icons.arrow_back_rounded,
+                              size: 20,
+                              color: AppTheme.accent.withValues(alpha: 0.7)))),
+                  const SizedBox(width: 14),
+                  Text('New Routine',
                       style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.accent))),
-            ]),
-            const SizedBox(height: 8),
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                          letterSpacing: -0.5)),
+                ]).animate().fadeIn(duration: 250.ms),
+                const SizedBox(height: 22),
 
-            // Block list
-            Expanded(
-              child: _blocks.isEmpty
-                  ? Center(
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      Text('✏️', style: TextStyle(fontSize: 30)),
-                      const SizedBox(height: 8),
-                      Text('Add blocks to build your routine',
-                          style: TextStyle(
+                // Name input
+                GlassCard(
+                  padding: EdgeInsets.zero,
+                  child: TextField(
+                    controller: _name,
+                    style: TextStyle(
+                        color: cs.onSurface,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500),
+                    decoration: InputDecoration(
+                      hintText: 'Routine name',
+                      hintStyle: TextStyle(
+                          color: isDark
+                              ? AppTheme.darkText3
+                              : AppTheme.lightText3),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 16),
+                    ),
+                  ),
+                ).animate().fadeIn(delay: 50.ms, duration: 250.ms),
+                const SizedBox(height: 18),
+
+                // Blocks header
+                Row(children: [
+                  Text('Blocks',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurface)),
+                  const SizedBox(width: 8),
+                  Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: AppTheme.accent.withValues(alpha: 0.1)),
+                      child: Text('${_blocks.length}',
+                          style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.accent))),
+                ]),
+                const SizedBox(height: 8),
+
+                // Block list
+                Expanded(
+                  child: _blocks.isEmpty
+                      ? Center(
+                          child:
+                              Column(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(Icons.edit_note_rounded,
+                              size: 30,
                               color: isDark
                                   ? AppTheme.darkText3
-                                  : AppTheme.lightText3,
-                              fontSize: 13)),
-                    ]))
-                  : ReorderableListView.builder(
-                      itemCount: _blocks.length,
-                      onReorder: (o, n) {
-                        setState(() {
-                          if (n > o) n--;
-                          _blocks.insert(n, _blocks.removeAt(o));
-                        });
-                      },
-                      proxyDecorator: (child, _, __) =>
-                          Material(color: Colors.transparent, child: child),
-                      itemBuilder: (_, i) {
-                        final b = _blocks[i];
-                        final bColor = Color(b.colorValue);
-                        return Padding(
-                          key: ValueKey(b.id),
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: GlassCard(
-                              compact: true,
-                              glowColor: bColor,
-                              child: Row(children: [
-                                Icon(Icons.drag_indicator_rounded,
-                                    color: isDark
-                                        ? AppTheme.darkText3
-                                        : AppTheme.lightText3,
-                                    size: 16),
-                                const SizedBox(width: 8),
-                                Container(
-                                    width: 34,
-                                    height: 34,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: bColor.withValues(alpha: 0.08),
-                                        border: Border.all(
-                                            color:
-                                                bColor.withValues(alpha: 0.15)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: bColor.withValues(
-                                                  alpha: 0.08),
-                                              blurRadius: 6)
-                                        ]),
-                                    child: Center(
-                                        child: Text(
-                                            _catEmoji[_cats
-                                                .indexOf(b.category)
-                                                .clamp(0, _cats.length - 1)],
-                                            style: TextStyle(fontSize: 15)))),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                      Text(b.title,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 14,
-                                              color: cs.onSurface)),
-                                      Text(
-                                          '${b.duration.inMinutes}m · ${b.category}',
-                                          style: TextStyle(
-                                              fontSize: 11,
-                                              color: isDark
-                                                  ? AppTheme.darkText3
-                                                  : AppTheme.lightText3)),
-                                    ])),
-                                IconButton(
-                                    icon: Icon(Icons.close_rounded,
-                                        size: 16,
+                                  : AppTheme.lightText3),
+                          const SizedBox(height: 8),
+                          Text('Add blocks to build your routine',
+                              style: TextStyle(
+                                  color: isDark
+                                      ? AppTheme.darkText3
+                                      : AppTheme.lightText3,
+                                  fontSize: 13)),
+                        ]))
+                      : ReorderableListView.builder(
+                          itemCount: _blocks.length,
+                          onReorder: (o, n) {
+                            setState(() {
+                              if (n > o) n--;
+                              _blocks.insert(n, _blocks.removeAt(o));
+                            });
+                          },
+                          proxyDecorator: (child, _, __) =>
+                              Material(color: Colors.transparent, child: child),
+                          itemBuilder: (_, i) {
+                            final b = _blocks[i];
+                            final bColor = Color(b.colorValue);
+                            return Padding(
+                              key: ValueKey(b.id),
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: GlassCard(
+                                  glowColor: bColor,
+                                  child: Row(children: [
+                                    Icon(Icons.drag_indicator_rounded,
                                         color: isDark
                                             ? AppTheme.darkText3
-                                            : AppTheme.lightText3),
-                                    onPressed: () =>
-                                        setState(() => _blocks.removeAt(i))),
-                              ])),
-                        );
-                      }),
-            ),
+                                            : AppTheme.lightText3,
+                                        size: 16),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                        width: 34,
+                                        height: 34,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color:
+                                                bColor.withValues(alpha: 0.08),
+                                            border: Border.all(
+                                                color: bColor.withValues(
+                                                    alpha: 0.15)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  color: bColor.withValues(
+                                                      alpha: 0.08),
+                                                  blurRadius: 6)
+                                            ]),
+                                        child: Center(
+                                            child: Icon(
+                                                _catIcons[_cats
+                                                    .indexOf(b.category)
+                                                    .clamp(0, _cats.length - 1)],
+                                                size: 16,
+                                                color: Color(_catColors[_cats.indexOf(b.category).clamp(0, _cats.length - 1)])))),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                          Text(b.title,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14,
+                                                  color: cs.onSurface)),
+                                          Text(
+                                              '${b.duration.inMinutes}m · ${b.category}',
+                                              style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: isDark
+                                                      ? AppTheme.darkText3
+                                                      : AppTheme.lightText3)),
+                                        ])),
+                                    IconButton(
+                                        icon: Icon(Icons.close_rounded,
+                                            size: 16,
+                                            color: isDark
+                                                ? AppTheme.darkText3
+                                                : AppTheme.lightText3),
+                                        onPressed: () => setState(
+                                            () => _blocks.removeAt(i))),
+                                  ])),
+                            );
+                          }),
+                ),
 
-            // Bottom actions
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(children: [
-                Expanded(
-                    child: GestureDetector(
-                        onTap: () => _addSheet(context),
-                        child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color: cs.onSurface.withValues(alpha: 0.04),
-                                border: Border.all(
-                                    color:
-                                        cs.onSurface.withValues(alpha: 0.06))),
-                            child: Center(
-                                child: Text('+ Add Block',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
+                // Bottom actions
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(children: [
+                    Expanded(
+                        child: GestureDetector(
+                            onTap: () => _addSheet(context),
+                            child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: cs.onSurface.withValues(alpha: 0.04),
+                                    border: Border.all(
                                         color: cs.onSurface
-                                            .withValues(alpha: 0.5))))))),
-                const SizedBox(width: 12),
-                Expanded(
-                    child: GestureDetector(
-                        onTap: _save,
-                        child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                gradient: const LinearGradient(colors: [
-                                  AppTheme.accent,
-                                  AppTheme.accentAlt
-                                ]),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: AppTheme.accent
-                                          .withValues(alpha: 0.2),
-                                      blurRadius: 12)
-                                ]),
-                            child: const Center(
-                                child: Text('Save',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
-                                        color: Colors.white)))))),
+                                            .withValues(alpha: 0.06))),
+                                child: Center(
+                                    child: Text('+ Add Block',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                            color: cs.onSurface
+                                                .withValues(alpha: 0.5))))))),
+                    const SizedBox(width: 12),
+                    Expanded(
+                        child: GestureDetector(
+                            onTap: _save,
+                            child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    gradient: const LinearGradient(colors: [
+                                      AppTheme.accent,
+                                      AppTheme.accentAlt
+                                    ]),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppTheme.accent
+                                              .withValues(alpha: 0.2),
+                                          blurRadius: 12)
+                                    ]),
+                                child: const Center(
+                                    child: Text('Save',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14,
+                                            color: Colors.white)))))),
+                  ]),
+                ),
+                const SizedBox(height: 8),
               ]),
             ),
-            const SizedBox(height: 8),
-          ]),
+          ),
         ),
       ),
     );
@@ -313,26 +334,10 @@ class _State extends ConsumerState<BuildRoutineScreen> {
         backgroundColor: Colors.transparent,
         builder: (c) => StatefulBuilder(builder: (c, setBS) {
               return Container(
-                margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 padding: EdgeInsets.fromLTRB(
-                    22, 22, 22, MediaQuery.of(c).viewInsets.bottom + 22),
-                decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkCard : Colors.white,
-                  borderRadius: BorderRadius.circular(26),
-                  border: isDark
-                      ? Border.all(
-                          color: AppTheme.darkBorder.withValues(alpha: 0.5))
-                      : null,
-                  boxShadow: [
-                    BoxShadow(
-                        color: AppTheme.accent.withValues(alpha: 0.04),
-                        blurRadius: 30,
-                        spreadRadius: -4),
-                    BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        blurRadius: 20),
-                  ],
-                ),
+                    24, 24, 24, MediaQuery.of(c).viewInsets.bottom + 24),
+                decoration: AppTheme.neoCard(isDark: isDark, radius: 32),
                 child: SingleChildScrollView(
                     child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -379,25 +384,28 @@ class _State extends ConsumerState<BuildRoutineScreen> {
                                         duration:
                                             const Duration(milliseconds: 200),
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 11),
+                                            vertical: 10),
                                         decoration: sel
                                             ? AppTheme.glowButton(
                                                 color: AppTheme.accent,
                                                 radius: 12)
-                                            : BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                color: cs.onSurface
-                                                    .withValues(alpha: 0.03),
-                                                border: Border.all(
-                                                    color: cs.onSurface.withValues(
-                                                        alpha: 0.05))),
+                                            : AppTheme.neoCard(
+                                                isDark: isDark,
+                                                isInset: true,
+                                                radius: 12),
                                         child: Center(
                                             child: Text(label,
                                                 style: TextStyle(
                                                     fontSize: 12,
-                                                    fontWeight: sel ? FontWeight.w700 : FontWeight.w400,
-                                                    color: sel ? AppTheme.accent : cs.onSurface.withValues(alpha: 0.4))))))));
+                                                    fontWeight: sel
+                                                        ? FontWeight.w700
+                                                        : FontWeight.w500,
+                                                    color: sel
+                                                        ? AppTheme.accent
+                                                        : (isDark
+                                                            ? AppTheme.darkText2
+                                                            : AppTheme
+                                                                .lightText2))))))));
                       }).toList()),
                       const SizedBox(height: 14),
                       Row(children: [
@@ -416,18 +424,11 @@ class _State extends ConsumerState<BuildRoutineScreen> {
                                   },
                                   child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 15, horizontal: 14),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(14),
-                                          color: isDark
-                                              ? Colors.white
-                                                  .withValues(alpha: 0.03)
-                                              : cs.onSurface
-                                                  .withValues(alpha: 0.03),
-                                          border: Border.all(
-                                              color: cs.onSurface
-                                                  .withValues(alpha: 0.05))),
+                                          vertical: 14, horizontal: 14),
+                                      decoration: AppTheme.neoCard(
+                                          isDark: isDark,
+                                          isInset: true,
+                                          radius: 12),
                                       child: Text(
                                           time != null
                                               ? '${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}'
@@ -437,7 +438,7 @@ class _State extends ConsumerState<BuildRoutineScreen> {
                                                   ? cs.onSurface
                                                   : cs.onSurface
                                                       .withValues(alpha: 0.25),
-                                              fontSize: 14))))),
+                                              fontSize: 13))))),
                         ],
                       ]),
                       const SizedBox(height: 14),
@@ -460,23 +461,23 @@ class _State extends ConsumerState<BuildRoutineScreen> {
                                 child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 9),
+                                        horizontal: 12, vertical: 8),
                                     decoration: sel
                                         ? AppTheme.glowButton(
-                                            color: catColor, radius: 12)
-                                        : BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            color: cs.onSurface
-                                                .withValues(alpha: 0.03),
-                                            border: Border.all(
-                                                color: cs.onSurface
-                                                    .withValues(alpha: 0.05))),
+                                            color: catColor, radius: 10)
+                                        : AppTheme.neoCard(
+                                            isDark: isDark,
+                                            isInset: true,
+                                            radius: 10),
                                     child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text(_catEmoji[i],
-                                              style: TextStyle(fontSize: 14)),
+                                          Icon(_catIcons[i],
+                                              size: 14,
+                                              color: sel
+                                                  ? catColor
+                                                  : cs.onSurface
+                                                      .withValues(alpha: 0.5)),
                                           const SizedBox(width: 6),
                                           Text(_cats[i],
                                               style: TextStyle(
@@ -511,24 +512,20 @@ class _State extends ConsumerState<BuildRoutineScreen> {
                               Navigator.pop(c);
                             },
                             child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    gradient: const LinearGradient(colors: [
-                                      AppTheme.accent,
-                                      AppTheme.accentAlt
-                                    ]),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: AppTheme.accent
-                                              .withValues(alpha: 0.2),
-                                          blurRadius: 12)
-                                    ]),
-                                child: const Center(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
+                                decoration: AppTheme.neoCard(
+                                  isDark: isDark,
+                                  radius: 16,
+                                ),
+                                child: Center(
                                     child: Text('Add Block',
                                         style: TextStyle(
                                             fontWeight: FontWeight.w700,
-                                            fontSize: 15,
-                                            color: Colors.white)))),
+                                            fontSize: 14,
+                                            color: isDark
+                                                ? Colors.white
+                                                : AppTheme.lightText1)))),
                           )),
                     ])),
               );
@@ -538,29 +535,19 @@ class _State extends ConsumerState<BuildRoutineScreen> {
   Widget _input(
           TextEditingController c, String hint, ColorScheme cs, bool isDark,
           {bool isNumber = false}) =>
-      TextField(
-          controller: c,
-          keyboardType: isNumber ? TextInputType.number : null,
-          style: TextStyle(color: cs.onSurface, fontSize: 14),
-          decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                  color: isDark ? AppTheme.darkText3 : AppTheme.lightText3),
-              filled: true,
-              fillColor: isDark
-                  ? Colors.white.withValues(alpha: 0.03)
-                  : cs.onSurface.withValues(alpha: 0.03),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide:
-                      BorderSide(color: cs.onSurface.withValues(alpha: 0.05))),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                      color: AppTheme.accent.withValues(alpha: 0.35))),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14)));
+      Container(
+        decoration: AppTheme.neoCard(isDark: isDark, isInset: true, radius: 12),
+        child: TextField(
+            controller: c,
+            keyboardType: isNumber ? TextInputType.number : null,
+            style: TextStyle(color: cs.onSurface, fontSize: 13),
+            decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: TextStyle(
+                    color: isDark ? AppTheme.darkText3 : AppTheme.lightText3,
+                    fontSize: 13),
+                border: InputBorder.none,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 14))),
+      );
 }

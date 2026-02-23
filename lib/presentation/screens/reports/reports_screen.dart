@@ -20,6 +20,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
   late TabController _tab;
   List<TrackRecordEntity> _records = [];
   bool _loading = true;
+  int _chartStyle = 0; // 0=Bar, 1=Line, 2=Pie
 
   @override
   void initState() {
@@ -30,11 +31,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
 
   Future<void> _load() async {
     final r = await sl<GetTrackRecordsUseCase>()();
-    if (mounted)
+    if (mounted) {
       setState(() {
         _records = r;
         _loading = false;
       });
+    }
   }
 
   @override
@@ -49,45 +51,65 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: _loading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(
                     color: AppTheme.accent, strokeWidth: 2))
-            : ListView(
-                padding: const EdgeInsets.fromLTRB(18, 14, 18, 100),
-                children: [
-                    Text('Reports',
-                        style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w800,
-                            color: cs.onSurface,
-                            letterSpacing: -1.2)),
-                    const SizedBox(height: 18),
+            : Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  child: ListView(
+                      padding: EdgeInsets.fromLTRB(
+                        MediaQuery.sizeOf(context).width > 600 ? 32 : 16,
+                        MediaQuery.sizeOf(context).width > 600 ? 32 : 20,
+                        MediaQuery.sizeOf(context).width > 600 ? 32 : 16,
+                        120,
+                      ),
+                      children: [
+                        Text('Reports',
+                            style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w800,
+                                color: cs.onSurface,
+                                letterSpacing: -1.2)),
+                        const SizedBox(height: 18),
 
-                    // Tab selector — pill toggle
-                    GlassCard(
-                        padding: const EdgeInsets.all(4),
-                        child: Row(children: [
-                          _TabPill('Weekly', 0),
-                          _TabPill('Monthly', 1),
-                        ])).animate().fadeIn(duration: 300.ms),
-                    const SizedBox(height: 16),
+                        // Tab selector — pill toggle
+                        GlassCard(
+                            padding: const EdgeInsets.all(4),
+                            child: Row(children: [
+                              _tabPill('Weekly', 0),
+                              _tabPill('Monthly', 1),
+                            ])).animate().fadeIn(duration: 300.ms),
+                        const SizedBox(height: 12),
 
-                    AnimatedBuilder(
-                        animation: _tab,
-                        builder: (_, __) => _tab.index == 0
-                            ? _weekly(cs, isDark)
-                            : _monthly(cs, isDark)),
-                    const SizedBox(height: 12),
-                    _punctuality(cs, isDark),
-                  ]),
+                        // Chart Style Selector
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            _styleBtn(Icons.bar_chart_rounded, 0, isDark),
+                            _styleBtn(Icons.show_chart_rounded, 1, isDark),
+                            _styleBtn(Icons.pie_chart_rounded, 2, isDark),
+                          ],
+                        ).animate().fadeIn(delay: 100.ms),
+                        const SizedBox(height: 12),
+
+                        AnimatedBuilder(
+                            animation: _tab,
+                            builder: (_, __) => _tab.index == 0
+                                ? _weekly(cs, isDark)
+                                : _monthly(cs, isDark)),
+                        const SizedBox(height: 12),
+                        _punctuality(cs, isDark),
+                      ]),
+                ),
+              ),
       ),
     );
   }
 
-  Widget _TabPill(String label, int idx) {
+  Widget _tabPill(String label, int idx) {
     final sel = _tab.index == idx;
     return Expanded(
         child: GestureDetector(
@@ -126,6 +148,33 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     ));
   }
 
+  Widget _styleBtn(IconData icon, int idx, bool isDark) {
+    final sel = _chartStyle == idx;
+    return GestureDetector(
+      onTap: () => setState(() => _chartStyle = idx),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(left: 8),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: sel
+              ? AppTheme.accent.withValues(alpha: 0.15)
+              : (isDark ? AppTheme.darkCard : AppTheme.lightCard),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+              color: sel
+                  ? AppTheme.accent.withValues(alpha: 0.3)
+                  : Colors.transparent),
+        ),
+        child: Icon(icon,
+            size: 20,
+            color: sel
+                ? AppTheme.accent
+                : (isDark ? AppTheme.darkText3 : AppTheme.lightText3)),
+      ),
+    );
+  }
+
   Widget _weekly(ColorScheme cs, bool isDark) {
     final now = DateTime.now();
     final days = List.generate(7, (i) => now.subtract(Duration(days: 6 - i)));
@@ -138,10 +187,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     final maxY = counts.fold(0.0, (a, b) => a > b ? a : b);
 
     return GlassCard(
-      glowColor: AppTheme.accent,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('📈', style: TextStyle(fontSize: 20)),
+          const Icon(Icons.trending_up_rounded,
+              size: 20, color: AppTheme.accent),
           const SizedBox(width: 10),
           Text('This Week',
               style: TextStyle(
@@ -152,51 +201,19 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
         const SizedBox(height: 20),
         SizedBox(
             height: 160,
-            child: BarChart(BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: maxY < 1 ? 5 : maxY + 2,
-              barTouchData: BarTouchData(enabled: false),
-              titlesData: FlTitlesData(
-                bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 24,
-                        getTitlesWidget: (v, _) => v.toInt() < labels.length
-                            ? Text(labels[v.toInt()],
-                                style: TextStyle(
-                                    color: isDark
-                                        ? AppTheme.darkText3
-                                        : AppTheme.lightText3,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500))
-                            : const SizedBox.shrink())),
-                leftTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              ),
-              gridData: const FlGridData(show: false),
-              borderData: FlBorderData(show: false),
-              barGroups: counts
-                  .asMap()
-                  .entries
-                  .map((e) => BarChartGroupData(x: e.key, barRods: [
-                        BarChartRodData(
-                            toY: e.value,
-                            width: 22,
-                            borderRadius: BorderRadius.circular(8),
-                            gradient: LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                                colors: [
-                                  AppTheme.accent.withValues(alpha: 0.3),
-                                  AppTheme.accent.withValues(alpha: 0.7)
-                                ])),
-                      ]))
-                  .toList(),
-            ))),
+            child: _chartStyle == 0
+                ? _buildBarChart(counts, labels, maxY, isDark)
+                : _chartStyle == 1
+                    ? _buildLineChart(
+                        counts
+                            .asMap()
+                            .entries
+                            .map((e) => FlSpot(e.key.toDouble(), e.value))
+                            .toList(),
+                        labels,
+                        maxY,
+                        isDark)
+                    : _buildPieChart(counts, labels, isDark)),
       ]),
     ).animate().fadeIn(duration: 400.ms);
   }
@@ -213,10 +230,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     final maxY = spots.fold(0.0, (m, s) => s.y > m ? s.y : m);
 
     return GlassCard(
-      glowColor: AppTheme.accentAlt,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('📊', style: TextStyle(fontSize: 20)),
+          const Icon(Icons.bar_chart_rounded, size: 20, color: AppTheme.accent),
           const SizedBox(width: 10),
           Text(DateFormat('MMMM yyyy').format(now),
               style: TextStyle(
@@ -227,60 +243,154 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
         const SizedBox(height: 20),
         SizedBox(
             height: 180,
-            child: LineChart(LineChartData(
-              gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 1,
-                  getDrawingHorizontalLine: (_) => FlLine(
-                      color: isDark
-                          ? AppTheme.darkBorder.withValues(alpha: 0.3)
-                          : AppTheme.lightBorder,
-                      strokeWidth: 1)),
-              titlesData: FlTitlesData(
-                bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                        showTitles: true,
-                        interval: 7,
-                        reservedSize: 24,
-                        getTitlesWidget: (v, _) => Text('${v.toInt() + 1}',
-                            style: TextStyle(
-                                color: isDark
-                                    ? AppTheme.darkText3
-                                    : AppTheme.lightText3,
-                                fontSize: 10)))),
-                leftTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              ),
-              borderData: FlBorderData(show: false),
-              minY: 0,
-              maxY: maxY < 1 ? 5 : maxY + 2,
-              lineBarsData: [
-                LineChartBarData(
-                    spots: spots,
-                    isCurved: true,
-                    gradient: const LinearGradient(
-                        colors: [AppTheme.accent, AppTheme.accentAlt]),
-                    barWidth: 2.5,
-                    isStrokeCapRound: true,
-                    dotData: const FlDotData(show: false),
-                    belowBarData: BarAreaData(
-                        show: true,
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              AppTheme.accent.withValues(alpha: 0.12),
-                              Colors.transparent
-                            ])))
-              ],
-            ))),
+            child: _chartStyle == 0
+                ? _buildBarChart(spots.map((s) => s.y).toList(),
+                    List.generate(dim, (i) => '${i + 1}'), maxY, isDark)
+                : _chartStyle == 1
+                    ? _buildLineChart(spots,
+                        List.generate(dim, (i) => '${i + 1}'), maxY, isDark)
+                    : _buildPieChart(spots.map((s) => s.y).toList(),
+                        List.generate(dim, (i) => '${i + 1}'), isDark)),
       ]),
     ).animate().fadeIn(duration: 400.ms);
+  }
+
+  Widget _buildBarChart(
+      List<double> counts, List<String> labels, double maxY, bool isDark) {
+    return BarChart(BarChartData(
+      alignment: BarChartAlignment.spaceAround,
+      maxY: maxY < 1 ? 5 : maxY + 2,
+      barTouchData: const BarTouchData(enabled: false),
+      titlesData: FlTitlesData(
+        bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 24,
+                interval: labels.length > 7 ? 7 : 1,
+                getTitlesWidget: (v, _) => v.toInt() < labels.length
+                    ? Text(labels[v.toInt()],
+                        style: TextStyle(
+                            color: isDark
+                                ? AppTheme.darkText3
+                                : AppTheme.lightText3,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500))
+                    : const SizedBox.shrink())),
+        leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles:
+            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      ),
+      gridData: const FlGridData(show: false),
+      borderData: FlBorderData(show: false),
+      barGroups: counts
+          .asMap()
+          .entries
+          .map((e) => BarChartGroupData(x: e.key, barRods: [
+                BarChartRodData(
+                    toY: e.value,
+                    width: labels.length > 7 ? 6 : 22,
+                    borderRadius: BorderRadius.circular(8),
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          AppTheme.accent.withValues(alpha: 0.3),
+                          AppTheme.accent.withValues(alpha: 0.7)
+                        ])),
+              ]))
+          .toList(),
+    ));
+  }
+
+  Widget _buildLineChart(
+      List<FlSpot> spots, List<String> labels, double maxY, bool isDark) {
+    return LineChart(LineChartData(
+      gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: 1,
+          getDrawingHorizontalLine: (_) => FlLine(
+              color: isDark
+                  ? AppTheme.darkBorder.withValues(alpha: 0.3)
+                  : AppTheme.lightBorder,
+              strokeWidth: 1)),
+      titlesData: FlTitlesData(
+        bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+                showTitles: true,
+                interval: labels.length > 7 ? 7 : 1,
+                reservedSize: 24,
+                getTitlesWidget: (v, _) => v.toInt() < labels.length
+                    ? Text(labels[v.toInt()],
+                        style: TextStyle(
+                            color: isDark
+                                ? AppTheme.darkText3
+                                : AppTheme.lightText3,
+                            fontSize: 10))
+                    : const SizedBox.shrink())),
+        leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles:
+            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      ),
+      borderData: FlBorderData(show: false),
+      minY: 0,
+      maxY: maxY < 1 ? 5 : maxY + 2,
+      lineBarsData: [
+        LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            gradient: const LinearGradient(
+                colors: [AppTheme.accent, AppTheme.accentAlt]),
+            barWidth: 2.5,
+            isStrokeCapRound: true,
+            dotData: const FlDotData(show: false),
+            belowBarData: BarAreaData(
+                show: true,
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppTheme.accent.withValues(alpha: 0.12),
+                      Colors.transparent
+                    ])))
+      ],
+    ));
+  }
+
+  Widget _buildPieChart(List<double> counts, List<String> labels, bool isDark) {
+    if (counts.every((c) => c == 0)) {
+      return Center(
+          child: Text('No data for pie chart',
+              style: TextStyle(
+                  color: isDark ? AppTheme.darkText3 : AppTheme.lightText3)));
+    }
+
+    final colors = [
+      AppTheme.accent,
+      AppTheme.success,
+      AppTheme.warning,
+      AppTheme.error,
+      Colors.purpleAccent,
+      Colors.blueAccent,
+      Colors.tealAccent
+    ];
+
+    return PieChart(PieChartData(
+      sectionsSpace: 2,
+      centerSpaceRadius: 40,
+      sections: counts.asMap().entries.where((e) => e.value > 0).map((e) {
+        return PieChartSectionData(
+          color: colors[e.key % colors.length],
+          value: e.value,
+          title: '${labels[e.key]}\n${e.value.toInt()}',
+          radius: 65,
+          titleStyle: const TextStyle(
+              fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+        );
+      }).toList(),
+    ));
   }
 
   Widget _punctuality(ColorScheme cs, bool isDark) {
@@ -293,7 +403,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     return GlassCard(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('⏰', style: TextStyle(fontSize: 20)),
+          const Icon(Icons.schedule_rounded, size: 20, color: AppTheme.accent),
           const SizedBox(width: 10),
           Text('Punctuality',
               style: TextStyle(
