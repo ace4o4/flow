@@ -2,7 +2,6 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
 
-
   _fe_analyzer_shared:
     dependency: transitive
     description:
